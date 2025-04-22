@@ -42,10 +42,9 @@ These limitations, especially the insufficient fine-tuning and limited corpus, d
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/erag-reproducibility-study.git
+    git clone https://github.com/F-Mangini/erag-reproducibility-study.git
     cd erag-reproducibility-study
     ```
-    *(Replace `your-username`)*
 
 2.  **Create a virtual environment (recommended):**
     ```bash
