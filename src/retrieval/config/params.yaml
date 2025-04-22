@@ -1,0 +1,83 @@
+# Configuration for eRAG Reproducibility Study
+
+# --- Data Paths ---
+data_dir: "data"
+models_dir: "models"
+logs_dir: "logs"
+
+# Input KILT/Wikipedia data
+kilt_url: "http://dl.fbaipublicfiles.com/KILT/kilt_knowledgesource.json"
+wiki_processed_subset_path: "data/wikipedia_passages_sample.jsonl" # Output of script 1
+
+# Input NQ data
+nq_dev_path: "data/nq-dev-kilt.jsonl"
+nq_train_path: "data/nq-train-kilt.jsonl"
+nq_test_path: "data/nq-test_without_answers-kilt.jsonl" # Only used if evaluating official test set
+
+# Intermediate data files
+augmented_data_path: "data/augmented_nq_dataset.json" # Output of script 3 (using NQ dev for now)
+# If splitting augmented data for train/test:
+# train_split_path: "data/train_split.json"
+# test_split_path: "data/test_split.json"
+
+# --- Model & Index Paths ---
+# BM25
+bm25_index_dir: "models/bm25"
+bm25_index_filename: "bm25_index.pkl"
+
+# Contriever
+contriever_model_name: "facebook/contriever"
+contriever_index_dir: "models/contriever"
+contriever_index_filename: "faiss_index.idx"
+contriever_embeddings_filename: "doc_embeddings.npy" # Optional: save embeddings
+
+# T5 Generator
+t5_base_model_name: "t5-small"
+t5_finetuned_dir: "models/t5_fid_finetuned"
+
+# --- Preprocessing Params ---
+wiki_preprocessing:
+  num_records_to_process: 5903 # Set to -1 or very large number for full corpus
+  passage_max_words: 100
+
+# --- Retrieval Params ---
+# K documents retrieved when augmenting data for fine-tuning
+retrieval_k_for_training_data: 50
+# List of K values to test during the main evaluation loop
+retrieval_k_values_for_evaluation: [40] # Example, paper used [1..50]
+
+# --- T5-FiD Training Params ---
+training:
+  # Which dataset split file to use for training (adjust if using official train set)
+  train_data_path: "data/augmented_nq_dataset.json" # Or train_split_path
+  # Optional: path for a validation set during training (not implemented in notebook loop)
+  # validation_data_path: "data/test_split.path"
+  seed: 42
+  max_input_length: 512   # Max length for encoder input (query + context)
+  max_target_length: 128  # Max length for decoder output (answer)
+  max_docs_per_item: 40   # Max retrieved docs concatenated for FiD (adjust based on memory)
+  num_train_epochs: 1     # Set to 10 to match paper (requires more resources)
+  per_device_train_batch_size: 1
+  effective_train_batch_size: 64
+  learning_rate: 5.0e-5
+  weight_decay: 0.01      # Corresponds to 1e-2
+  adam_epsilon: 1.0e-8    # Default for AdamW
+  warmup_proportion: 0.05 # Percentage of total steps for warmup
+  logging_steps: 10       # Log loss every N optimizer steps
+  save_epochs: 1          # Save checkpoint every N epochs
+
+# --- Evaluation Params ---
+evaluation:
+  # Which dataset split file to use for evaluation
+  test_data_path: "data/augmented_nq_dataset.json" # Or test_split_path
+  # Beam search size for generation during evaluation
+  t5_generation_num_beams: 4
+  # eRAG metrics to calculate (use {k} as placeholder)
+  erag_metrics_templates: ["P_{k}", "success_{k}"]
+  # File to store intermediate correlation results
+  checkpoint_file: "models/experiment_checkpoint.pkl"
+
+# --- Hardware ---
+# Set device: "cuda", "cpu", or null to auto-detect
+device: null
+faiss_use_gpu: false # Set to true if faiss-gpu is installed and desired
