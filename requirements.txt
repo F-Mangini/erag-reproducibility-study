@@ -1,0 +1,13 @@
+torch
+transformers
+faiss-cpu
+rank_bm25
+nltk
+numpy
+requests
+google-generativeai
+erag==0.0.1
+scipy
+scikit-learn
+jupyter
+ipywidgets
