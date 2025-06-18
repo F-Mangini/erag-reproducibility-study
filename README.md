@@ -1,4 +1,6 @@
-# Reproducibility Study: Evaluating Retrieval Quality in Retrieval-Augmented Generation (eRAG)
+# Reproducibility Study: Evaluating Retrieval Quality in Retrieval-Augmented Generation (eRAG) 
+
+## NOTE: THIS IS NOT THE OFFICIAL Reproducibility Study Repository (This is just a checkpoint for public display that will later be deleted)
 
 [![Status](https://img.shields.io/badge/status-Work%20In%20Progress-yellow.svg)](https://github.com/F-Mangini/erag-reproducibility-study)
 
